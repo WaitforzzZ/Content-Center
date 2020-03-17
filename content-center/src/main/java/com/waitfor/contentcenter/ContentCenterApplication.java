@@ -7,10 +7,10 @@ import tk.mybatis.spring.annotation.MapperScan;
 // 扫描mybatis哪些包里面的接口
 @MapperScan("com.waitfor")
 @SpringBootApplication
-public class UserCenterApplication {
+public class ContentCenterApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(UserCenterApplication.class, args);
+		SpringApplication.run(ContentCenterApplication.class, args);
 	}
 
 }
