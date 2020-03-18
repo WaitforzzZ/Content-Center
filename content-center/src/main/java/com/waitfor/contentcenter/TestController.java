@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.waitfor.content.dao.content.ShareMapper;
-import com.waitfor.content.domain.entity.content.Share;
+import com.waitfor.contentcenter.dao.content.ShareMapper;
+import com.waitfor.contentcenter.domain.entity.content.Share;
 
 
 @RestController

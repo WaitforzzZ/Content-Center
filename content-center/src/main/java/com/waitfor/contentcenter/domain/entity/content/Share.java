@@ -1,4 +1,4 @@
-package com.waitfor.content.domain.entity.content;
+package com.waitfor.contentcenter.domain.entity.content;
 
 import java.util.Date;
 

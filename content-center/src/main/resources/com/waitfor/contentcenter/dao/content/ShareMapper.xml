@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.waitfor.content.dao.content.ShareMapper">
-  <resultMap id="BaseResultMap" type="com.waitfor.content.domain.entity.content.Share">
+<mapper namespace="com.waitfor.contentcenter.dao.content.ShareMapper">
+  <resultMap id="BaseResultMap" type="com.waitfor.contentcenter.domain.entity.content.Share">
     <!--
       WARNING - @mbg.generated
     -->

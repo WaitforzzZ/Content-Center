@@ -21,13 +21,13 @@
                         password="${jdbc.password}">
         </jdbcConnection>
         <!-- 实体 -->
-        <javaModelGenerator targetPackage="com.waitfor.content.domain.entity.${moduleName}" 
+        <javaModelGenerator targetPackage="com.waitfor.contentcenter.domain.entity.${moduleName}" 
                             targetProject="src/main/java"/>
         <!-- mapper.xml -->
-        <sqlMapGenerator targetPackage="com.waitfor.content.dao.${moduleName}" 
+        <sqlMapGenerator targetPackage="com.waitfor.contentcenter.dao.${moduleName}" 
                          targetProject="src/main/resources"/>
         <!-- mapper接口 -->
-        <javaClientGenerator targetPackage="com.waitfor.content.dao.${moduleName}" 
+        <javaClientGenerator targetPackage="com.waitfor.contentcenter.dao.${moduleName}" 
                              targetProject="src/main/java"
                              type="XMLMAPPER"/>
         <!-- 为哪张表生成代码 -->
