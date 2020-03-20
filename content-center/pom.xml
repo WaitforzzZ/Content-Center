@@ -52,6 +52,16 @@
 			<version>1.18.8</version><!--$NO-MVN-MAN-VER$ -->
 			<scope>provided</scope>
 		</dependency>
+		
+		<!--spring-boot-starter-xxxx -->
+		<!--xxxx-spring-boot-starter -->
+		<!--spring-cloud-starter-{spring cloud子项目的名称}-[{模块名称}] -->
+		<!--feign spring-cloud-starter-openfeign -->
+		<!--sentinel spring-cloud-starter-alibaba-sentinel -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
