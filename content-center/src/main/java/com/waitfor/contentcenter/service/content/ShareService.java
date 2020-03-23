@@ -1,6 +1,7 @@
 package com.waitfor.contentcenter.service.content;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.alibaba.nacos.client.naming.utils.ThreadLocalRandom;
 import com.waitfor.contentcenter.dao.content.ShareMapper;
 import com.waitfor.contentcenter.domain.dto.content.ShareDTO;
 import com.waitfor.contentcenter.domain.dto.user.UserDTO;
@@ -33,11 +35,17 @@ public class ShareService {
 		Integer userId = share.getUserId();
 		//用户中心所有实例的信息
 		List<ServiceInstance> instances = discoveryClient.getInstances("user-center");
-		String targetUrl = instances.stream()
+		/*String targetUrl = instances.stream()
 		    //数据变换
 			.map(instance ->instance.getUri().toString()+ "/users/{id}")
 			.findFirst()
-			.orElseThrow(() -> new IllegalArgumentException("当前没有实例"));
+			.orElseThrow(() -> new IllegalArgumentException("当前没有实例"));*/
+		List<String> targetUrls = instances.stream()
+	    //数据变换
+		.map(instance ->instance.getUri().toString()+ "/users/{id}")
+		.collect(Collectors.toList());
+		int i = ThreadLocalRandom.current().nextInt(targetUrls.size());
+		String targetUrl = targetUrls.get(i);
 		log.info("请求的目标地址： {}",targetUrl);
 		// 通过RestTemplate调用用户微服务的/user/{userId}??
 		UserDTO userDTO = this.restTemplate.getForObject(
