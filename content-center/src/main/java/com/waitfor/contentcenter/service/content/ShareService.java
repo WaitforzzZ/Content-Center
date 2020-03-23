@@ -1,7 +1,11 @@
 package com.waitfor.contentcenter.service.content;
 
+import java.util.List;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -11,6 +15,8 @@ import com.waitfor.contentcenter.domain.dto.content.ShareDTO;
 import com.waitfor.contentcenter.domain.dto.user.UserDTO;
 import com.waitfor.contentcenter.domain.entity.content.Share;
 
+import lombok.extern.slf4j.Slf4j;
+@Slf4j
 @Service
 public class ShareService {
 	
@@ -18,14 +24,24 @@ public class ShareService {
 	private ShareMapper shareMapper;
 	@Autowired
 	private RestTemplate restTemplate;
+	@Autowired
+	private DiscoveryClient discoveryClient;
 	public ShareDTO findById(Integer id){
 		// 获取分享详情
 		Share share = this.shareMapper.selectByPrimaryKey(id);
 		// 发布人id
 		Integer userId = share.getUserId();
+		//用户中心所有实例的信息
+		List<ServiceInstance> instances = discoveryClient.getInstances("user-center");
+		String targetUrl = instances.stream()
+		    //数据变换
+			.map(instance ->instance.getUri().toString()+ "/users/{id}")
+			.findFirst()
+			.orElseThrow(() -> new IllegalArgumentException("当前没有实例"));
+		log.info("请求的目标地址： {}",targetUrl);
 		// 通过RestTemplate调用用户微服务的/user/{userId}??
 		UserDTO userDTO = this.restTemplate.getForObject(
-				"http://localhost:8080/users/{id}",
+				targetUrl,
 				UserDTO.class,userId);
 		//消息的装配
 		ShareDTO shareDTO = new ShareDTO();
