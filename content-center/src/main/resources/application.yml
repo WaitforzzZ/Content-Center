@@ -17,4 +17,9 @@ spring:
     name: content-center
 server:
   port: 8010
-  
+
+
+# 自定义负载均衡策略
+user-center:
+  ribbon:
+    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
