@@ -3,6 +3,7 @@ package com.waitfor.contentcenter;
 import java.util.Date;
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -14,12 +15,11 @@ import com.waitfor.contentcenter.domain.entity.content.Share;
 
 
 @RestController
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class TestController {
 
-	@Autowired
-	private ShareMapper shareMapper;
-	@Autowired
-	private DiscoveryClient discoveryClient;
+	private final ShareMapper shareMapper;
+	private final DiscoveryClient discoveryClient;
 	@GetMapping("/test")
 	public List<Share> testInsert(){
 		Share build = Share.builder()

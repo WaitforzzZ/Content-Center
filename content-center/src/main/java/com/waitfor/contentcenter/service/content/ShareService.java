@@ -3,6 +3,7 @@ package com.waitfor.contentcenter.service.content;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
@@ -21,14 +22,12 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ShareService {
 
-    @Autowired
-    private ShareMapper shareMapper;
-    @Autowired
-    private RestTemplate restTemplate;
-    @Autowired
-    private DiscoveryClient discoveryClient;
+    private final ShareMapper shareMapper;
+    private final RestTemplate restTemplate;
+    private final DiscoveryClient discoveryClient;
 
     public ShareDTO findById(Integer id) {
         // 获取分享详情
