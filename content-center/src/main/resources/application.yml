@@ -18,8 +18,13 @@ spring:
 server:
   port: 8010
 
-
 # 自定义负载均衡策略
-user-center:
-  ribbon:
-    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+#user-center:
+#  ribbon:
+#    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+# ribbon的饥饿加载
+ribbon:
+  eager-load:
+    enabled: true
+    clients: user-center
+
