@@ -13,6 +13,12 @@ spring:
         # 指定nacos server的地址
         server-addr: localhost:8848
         cluster-name: BJ
+        # 元数据主要用来解决多版本共存 例如：user-center v1只能调用content-center v1
+        metadata:
+          # 自己这个实例的版本
+          version: v1
+          # 允许调用的提供者版本
+          target-version: v1
   application:
     # 服务名称尽量用-， 不要用_， 不要用特殊字符
     name: content-center
