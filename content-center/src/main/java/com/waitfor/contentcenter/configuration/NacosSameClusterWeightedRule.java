@@ -65,7 +65,7 @@ public class NacosSameClusterWeightedRule extends AbstractLoadBalancerRule {
                 instancesToBeChosen = sameClusterInstances;
             }
             // 4. 基于权重的负载均衡算法， 返回一个实例
-            Instance instance = ExtendsBalancer.getHostByRandomWeight2(sameClusterInstances);
+            Instance instance = ExtendsBalancer.getHostByRandomWeight2(instancesToBeChosen);
             log.info("选择的实例是 port = {}, instance = {}",instance.getPort(),instance);
             return new NacosServer(instance);
         } catch (NacosException e) {
