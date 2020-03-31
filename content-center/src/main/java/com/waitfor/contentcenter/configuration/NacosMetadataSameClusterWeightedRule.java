@@ -70,7 +70,7 @@ public class NacosMetadataSameClusterWeightedRule extends AbstractLoadBalancerRu
             }
             List<Instance> clusterMetadataMatchInstances = metadataMatchInstances;
             if(StringUtils.isNotBlank(clusterName)){
-                clusterMetadataMatchInstances = instances.stream()
+                clusterMetadataMatchInstances = clusterMetadataMatchInstances.stream()
                         .filter(instance -> Objects.equals(clusterName,instance.getClusterName()))
                         .collect(Collectors.toList());
                 if(CollectionUtils.isEmpty(clusterMetadataMatchInstances)){

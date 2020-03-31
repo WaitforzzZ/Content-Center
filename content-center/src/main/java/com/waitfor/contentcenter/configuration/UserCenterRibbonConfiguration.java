@@ -9,9 +9,9 @@ import ribbonconfiguration.RibbonConfiguration;
 public class UserCenterRibbonConfiguration {
 
 }*/
-/*//ribbon全局配置
+//ribbon全局配置
 @Configuration
 @RibbonClients(defaultConfiguration = RibbonConfiguration.class)
 public class UserCenterRibbonConfiguration {
 
-}*/
+}
