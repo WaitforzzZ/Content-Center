@@ -41,5 +41,6 @@ feign:
   client:
     config:
       # 想要调用的微服务的名称
-      user-center:
+      # 全局配置
+      default:
         loggerLevel: full
