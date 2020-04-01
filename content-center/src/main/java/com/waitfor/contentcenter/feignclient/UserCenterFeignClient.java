@@ -1,6 +1,5 @@
 package com.waitfor.contentcenter.feignclient;
 
-import com.waitfor.contentcenter.configuration.UserCenterFeignConfiguration;
 import com.waitfor.contentcenter.domain.dto.user.UserDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
