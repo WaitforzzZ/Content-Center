@@ -1,11 +1,12 @@
 package com.waitfor.contentcenter.feignclient;
 
+import com.waitfor.contentcenter.configuration.UserCenterFeignConfiguration;
 import com.waitfor.contentcenter.domain.dto.user.UserDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "user-center")
+@FeignClient(name = "user-center", configuration = UserCenterFeignConfiguration.class)
 public interface UserCenterFeignClient {
     /**
      * Feign声明式的HTTP客户端（只要声明一个接口，

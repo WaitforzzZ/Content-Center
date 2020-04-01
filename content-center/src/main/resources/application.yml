@@ -34,4 +34,6 @@ ribbon:
   eager-load:
     enabled: true
     clients: user-center
-
+logging:
+  level:
+    com.waitfor.contentcenter.feignclient.UserCenterFeignClient: debug
