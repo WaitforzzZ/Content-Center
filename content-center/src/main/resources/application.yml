@@ -37,3 +37,9 @@ ribbon:
 logging:
   level:
     com.waitfor.contentcenter.feignclient.UserCenterFeignClient: debug
+feign:
+  client:
+    config:
+      # 想要调用的微服务的名称
+      user-center:
+        loggerLevel: full
