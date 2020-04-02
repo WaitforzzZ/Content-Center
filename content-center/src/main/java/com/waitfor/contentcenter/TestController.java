@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.waitfor.contentcenter.domain.dto.user.UserDTO;
+import com.waitfor.contentcenter.feignclient.TestBaiduFeignClient;
 import com.waitfor.contentcenter.feignclient.TestUserCenterFeignClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,5 +51,12 @@ public class TestController {
 	@GetMapping("/test-get")
 	public UserDTO query(UserDTO userDTO){
 		return this.testUserCenterFeignClient.query(userDTO);
+	}
+
+	@Autowired
+	private TestBaiduFeignClient testBaiduFeignClient;
+	@GetMapping("baidu")
+	public String index(){
+		return this.testBaiduFeignClient.index();
 	}
 }
