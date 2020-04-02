@@ -3,6 +3,8 @@ package com.waitfor.contentcenter;
 import java.util.Date;
 import java.util.List;
 
+import com.waitfor.contentcenter.domain.dto.user.UserDTO;
+import com.waitfor.contentcenter.feignclient.TestUserCenterFeignClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
@@ -20,6 +22,7 @@ public class TestController {
 
 	private final ShareMapper shareMapper;
 	private final DiscoveryClient discoveryClient;
+	private final TestUserCenterFeignClient testUserCenterFeignClient;
 	@GetMapping("/test")
 	public List<Share> testInsert(){
 		Share build = Share.builder()
@@ -42,5 +45,10 @@ public class TestController {
 		// 查询指定服务的所有实例信息
 		// consul/eureka/zookeeper...
 		return this.discoveryClient.getInstances("user-center");
+	}
+
+	@GetMapping("/test-get")
+	public UserDTO query(UserDTO userDTO){
+		return this.testUserCenterFeignClient.query(userDTO);
 	}
 }
