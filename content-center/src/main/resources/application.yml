@@ -19,6 +19,10 @@ spring:
           version: v1
           # 允许调用的提供者版本
           target-version: v1
+    sentinel:
+      transport:
+        # 指定sentinel 控制台的地址
+        dashboard: localhost:8080
   application:
     # 服务名称尽量用-， 不要用_， 不要用特殊字符
     name: content-center
@@ -51,3 +55,9 @@ feign:
     max-connections: 200
     # feign单个路径的最大连接数
     max-connections-per-route: 50
+#/actuator/sentinel默认隐藏，配置把它暴露出来
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
