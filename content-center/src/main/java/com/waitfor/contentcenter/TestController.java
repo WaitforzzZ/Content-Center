@@ -3,6 +3,7 @@ package com.waitfor.contentcenter;
 import java.util.Date;
 import java.util.List;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.waitfor.contentcenter.domain.dto.user.UserDTO;
 import com.waitfor.contentcenter.feignclient.TestBaiduFeignClient;
 import com.waitfor.contentcenter.feignclient.TestUserCenterFeignClient;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.waitfor.contentcenter.dao.content.ShareMapper;
@@ -72,5 +74,14 @@ public class TestController {
 	public String testB(){
 		this.testService.common();
 		return "test-b";
+	}
+
+	@GetMapping("test-host")
+	@SentinelResource("hot")
+	public String testHost(
+			@RequestParam(required = false) String a,
+			@RequestParam(required = false) String b
+	){
+		return a+" "+b;
 	}
 }
