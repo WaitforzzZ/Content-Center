@@ -16,6 +16,7 @@ import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
 import com.waitfor.contentcenter.domain.dto.user.UserDTO;
 import com.waitfor.contentcenter.feignclient.TestBaiduFeignClient;
 import com.waitfor.contentcenter.feignclient.TestUserCenterFeignClient;
+import com.waitfor.contentcenter.sentineltest.TestControllerBlockHandlerClass;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -112,7 +113,9 @@ public class TestController {
 		rules.add(rule);
 		FlowRuleManager.loadRules(rules);
 	}
-    @GetMapping("/test-sentinel-api")
+
+	// 版本1
+	@GetMapping("/test-sentinel-api")
 	public String testSentinelAPI(
 			@RequestParam(required = false) String a){
 		String resourceName = "test-sentinel-api";
@@ -147,4 +150,33 @@ public class TestController {
 		}
 
 	}
+
+	// 对版本1进行重构
+	@GetMapping("/test-sentinel-resource")
+	@SentinelResource(
+			value = "test-sentinel-api",
+			blockHandler = "block",
+			blockHandlerClass = TestControllerBlockHandlerClass.class,
+			fallback = "fallback"
+	)// 注解方式不支持来源
+	public String testSentinelResource(
+			@RequestParam(required = false) String a){
+		// 被保护的业务逻辑
+		if(StringUtils.isNotBlank(a)){
+			throw new IllegalArgumentException("a cannot be blank.");
+		}
+		return a;
+	}
+
+	/**
+	 * 1.5处理降级
+	 * sentinel 1.6 可以处理Throwable
+	 * @param a
+	 * @param e
+	 * @return
+	 */
+	public String fallback(String a, BlockException e){
+		return "限流，或者降级了 fallback";
+	}
+
 }
