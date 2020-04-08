@@ -1,12 +1,17 @@
 package com.waitfor.contentcenter.feignclient;
 
 import com.waitfor.contentcenter.domain.dto.user.UserDTO;
+import com.waitfor.contentcenter.feignclient.fallback.UserCenterFeignClientFallback;
+import com.waitfor.contentcenter.feignclient.fallbackFactory.UserCenterFeignClientFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 //@FeignClient(name = "user-center", configuration = UserCenterFeignConfiguration.class)
-@FeignClient(name = "user-center")
+@FeignClient(name = "user-center",
+        // fallback = UserCenterFeignClientFallback.class,
+        fallbackFactory = UserCenterFeignClientFallbackFactory.class// 功能比fallback强， 可以拿到异常
+)
 public interface UserCenterFeignClient {
     /**
      * Feign声明式的HTTP客户端（只要声明一个接口，
