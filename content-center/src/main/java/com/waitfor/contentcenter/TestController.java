@@ -1,9 +1,13 @@
 package com.waitfor.contentcenter;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
+import com.alibaba.csp.sentinel.slots.block.RuleConstant;
+import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
+import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
 import com.waitfor.contentcenter.domain.dto.user.UserDTO;
 import com.waitfor.contentcenter.feignclient.TestBaiduFeignClient;
 import com.waitfor.contentcenter.feignclient.TestUserCenterFeignClient;
@@ -83,5 +87,22 @@ public class TestController {
 			@RequestParam(required = false) String b
 	){
 		return a+" "+b;
+	}
+
+	@GetMapping("test-add-flow-rule")
+	public String testHost(){
+		this.initFlowQpsRule();
+		return "success";
+	}
+
+	private void initFlowQpsRule() {
+		List<FlowRule> rules = new ArrayList<>();
+		FlowRule rule = new FlowRule("/shares/1");
+		// set limit qps to 20
+		rule.setCount(20);
+		rule.setGrade(RuleConstant.FLOW_GRADE_QPS);
+		rule.setLimitApp("default");
+		rules.add(rule);
+		FlowRuleManager.loadRules(rules);
 	}
 }
