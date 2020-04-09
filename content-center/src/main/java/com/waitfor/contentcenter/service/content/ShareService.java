@@ -1,8 +1,10 @@
 package com.waitfor.contentcenter.service.content;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.waitfor.contentcenter.domain.dto.content.ShareAuditDTO;
 import com.waitfor.contentcenter.feignclient.UserCenterFeignClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -88,5 +90,23 @@ public class ShareService {
         System.out.println(forEntity.getBody());
         //相比getForObject可以拿到http的状态码
         System.out.println(forEntity.getStatusCode());
+    }
+
+    public Share auditById(Integer id, ShareAuditDTO auditDTO) {
+        // 1. 查询share是否存在， 不存在或者当前的auditStatus ！= NOT_YET, 那么抛异常
+        Share share = this.shareMapper.selectByPrimaryKey(id);
+        if(share == null){
+            throw new IllegalArgumentException("参数非法！ 该分享不存在!");
+        }
+        if(!Objects.equals("NOT_YET", share.getAuditStatus())){
+            throw new IllegalArgumentException("参数非法！ 该分享已审核通过或审核不通过!");
+        }
+        // 2. 审核资源， 将状态设为PASS/REJECT
+        share.setAuditStatus(auditDTO.getAuditStatusEnum().toString());
+        this.shareMapper.updateByPrimaryKey(share);
+        // 3. 如果是PASS， 那么为发布人添加积分
+        //异步执行
+        //this.userCenterFeignClient.addBonus(id,500);
+        return share;
     }
 }
