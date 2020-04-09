@@ -79,6 +79,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
+		<!--规则持久化-拉模式依赖-->
 		<dependency>
 			<groupId>com.alibaba.csp</groupId>
 			<artifactId>sentinel-datasource-extension</artifactId>
