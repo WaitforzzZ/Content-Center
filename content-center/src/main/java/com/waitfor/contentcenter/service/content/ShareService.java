@@ -5,8 +5,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.waitfor.contentcenter.domain.dto.content.ShareAuditDTO;
+import com.waitfor.contentcenter.domain.dto.messaging.UserAddBonusMsgDTO;
 import com.waitfor.contentcenter.feignclient.UserCenterFeignClient;
 import lombok.RequiredArgsConstructor;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
@@ -32,6 +34,7 @@ public class ShareService {
     private final RestTemplate restTemplate;
     private final DiscoveryClient discoveryClient;
     private final UserCenterFeignClient userCenterFeignClient;
+    private final RocketMQTemplate rocketMQTemplate;
 
     public ShareDTO findById(Integer id) {
         // 获取分享详情
@@ -104,9 +107,15 @@ public class ShareService {
         // 2. 审核资源， 将状态设为PASS/REJECT
         share.setAuditStatus(auditDTO.getAuditStatusEnum().toString());
         this.shareMapper.updateByPrimaryKey(share);
-        // 3. 如果是PASS， 那么为发布人添加积分
+        // 3. 如果是PASS， 那么发送消息给rocketmq， 让用户中心去消费， 并为发布人添加积分
         //异步执行
         //this.userCenterFeignClient.addBonus(id,500);
+        this.rocketMQTemplate.convertAndSend("add-bonus ",
+                UserAddBonusMsgDTO.builder()
+                        .userId(share.getId())
+                        .bonus(50)
+                        .build()
+        );
         return share;
     }
 }
