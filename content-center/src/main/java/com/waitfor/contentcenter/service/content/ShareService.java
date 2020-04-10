@@ -2,19 +2,24 @@ package com.waitfor.contentcenter.service.content;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.waitfor.contentcenter.domain.dto.content.ShareAuditDTO;
 import com.waitfor.contentcenter.domain.dto.messaging.UserAddBonusMsgDTO;
+import com.waitfor.contentcenter.domain.enums.AuditStatusEnum;
 import com.waitfor.contentcenter.feignclient.UserCenterFeignClient;
 import lombok.RequiredArgsConstructor;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
+import org.apache.rocketmq.spring.support.RocketMQHeaders;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import com.alibaba.nacos.client.naming.utils.ThreadLocalRandom;
@@ -35,6 +40,7 @@ public class ShareService {
     private final DiscoveryClient discoveryClient;
     private final UserCenterFeignClient userCenterFeignClient;
     private final RocketMQTemplate rocketMQTemplate;
+    private final RocketmqTransactionLogMapper rocketmqTransactionLogMapper;
 
     public ShareDTO findById(Integer id) {
         // 获取分享详情
@@ -95,6 +101,48 @@ public class ShareService {
         System.out.println(forEntity.getStatusCode());
     }
 
+    /**
+     * 版本1
+     * @param id
+     * @param auditDTO
+     * @return
+     */
+   /* public Share auditById(Integer id, ShareAuditDTO auditDTO) {
+        // 1. 查询share是否存在， 不存在或者当前的auditStatus ！= NOT_YET, 那么抛异常
+        Share share = this.shareMapper.selectByPrimaryKey(id);
+        if(share == null){
+            throw new IllegalArgumentException("参数非法！ 该分享不存在!");
+        }
+        if(!Objects.equals("NOT_YET", share.getAuditStatus())){
+            throw new IllegalArgumentException("参数非法！ 该分享已审核通过或审核不通过!");
+        }
+
+        // 2. 审核资源， 将状态设为PASS/REJECT
+        share.setAuditStatus(auditDTO.getAuditStatusEnum().toString());
+        this.shareMapper.updateByPrimaryKey(share);
+        // 3. 如果是PASS， 那么发送消息给rocketmq， 让用户中心去消费， 并为发布人添加积分
+        //异步执行
+        //this.userCenterFeignClient.addBonus(id,500);
+        this.rocketMQTemplate.convertAndSend("add-bonus ",
+                UserAddBonusMsgDTO.builder()
+                        .userId(share.getUserId())
+                        .bonus(50)
+                        .build()
+        );
+
+        // 4. 把share写到缓存
+
+        return share;
+    }
+}*/
+
+    /**
+     * 版本2
+     * rocketmq分布式事务
+     * @param id
+     * @param auditDTO
+     * @return
+     */
     public Share auditById(Integer id, ShareAuditDTO auditDTO) {
         // 1. 查询share是否存在， 不存在或者当前的auditStatus ！= NOT_YET, 那么抛异常
         Share share = this.shareMapper.selectByPrimaryKey(id);
@@ -104,18 +152,54 @@ public class ShareService {
         if(!Objects.equals("NOT_YET", share.getAuditStatus())){
             throw new IllegalArgumentException("参数非法！ 该分享已审核通过或审核不通过!");
         }
-        // 2. 审核资源， 将状态设为PASS/REJECT
-        share.setAuditStatus(auditDTO.getAuditStatusEnum().toString());
-        this.shareMapper.updateByPrimaryKey(share);
         // 3. 如果是PASS， 那么发送消息给rocketmq， 让用户中心去消费， 并为发布人添加积分
-        //异步执行
-        //this.userCenterFeignClient.addBonus(id,500);
-        this.rocketMQTemplate.convertAndSend("add-bonus ",
-                UserAddBonusMsgDTO.builder()
-                        .userId(share.getId())
-                        .bonus(50)
+        if(AuditStatusEnum.PASS.equals(auditDTO.getAuditStatusEnum())){
+            //发送半消息
+            String transactionId = UUID.randomUUID().toString();
+            this.rocketMQTemplate.sendMessageInTransaction(
+                    "tx-add-bonus-group",
+                    "add-bonus",
+                    MessageBuilder
+                            .withPayload(
+                                    UserAddBonusMsgDTO.builder()
+                                            .userId(share.getUserId())
+                                            .bonus(50)
+                                            .build()
+                            )
+                            // header也有妙用...
+                            .setHeader(RocketMQHeaders.TRANSACTION_ID, transactionId)
+                            .setHeader("share_id", id)
+                            .build(),
+                    // arg有大用处
+                    auditDTO
+            );
+        }
+        else {
+            this.auditById(id, auditDTO);
+        }
+        return share;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void auditByIdInDB(Integer id, ShareAuditDTO auditDTO) {
+        Share share = Share.builder()
+                .id(id)
+                .auditStatus(auditDTO.getAuditStatusEnum().toString())
+                .reason(auditDTO.getReason())
+                .build();
+        this.shareMapper.updateByPrimaryKeySelective(share);
+        // 4. 把share写到缓存
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void auditByIdWithRocketMqLog(Integer id, ShareAuditDTO auditDTO, String transactionId) {
+        this.auditByIdInDB(id, auditDTO);
+
+        this.rocketmqTransactionLogMapper.insertSelective(
+                RocketmqTransactionLog.builder()
+                        .transactionId(transactionId)
+                        .log("审核分享...")
                         .build()
         );
-        return share;
     }
 }
