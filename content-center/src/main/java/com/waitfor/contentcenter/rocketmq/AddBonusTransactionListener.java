@@ -1,6 +1,8 @@
 package com.waitfor.contentcenter.rocketmq;
 
+import com.waitfor.contentcenter.dao.messaging.RocketmqTransactionLogMapper;
 import com.waitfor.contentcenter.domain.dto.content.ShareAuditDTO;
+import com.waitfor.contentcenter.domain.entity.messaging.RocketmqTransactionLog;
 import com.waitfor.contentcenter.service.content.ShareService;
 import lombok.RequiredArgsConstructor;
 import org.apache.rocketmq.spring.annotation.RocketMQTransactionListener;
@@ -37,7 +39,7 @@ public class AddBonusTransactionListener implements RocketMQLocalTransactionList
         // select * from xxx where transaction_id = xxx
         RocketmqTransactionLog transactionLog = this.rocketmqTransactionLogMapper.selectOne(
                 RocketmqTransactionLog.builder()
-                    .transaction(transactionId)
+                    .transactionId(transactionId)
                     .build()
         );
         if (transactionLog != null){
