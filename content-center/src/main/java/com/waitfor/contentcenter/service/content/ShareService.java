@@ -5,8 +5,10 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.waitfor.contentcenter.dao.messaging.RocketmqTransactionLogMapper;
 import com.waitfor.contentcenter.domain.dto.content.ShareAuditDTO;
 import com.waitfor.contentcenter.domain.dto.messaging.UserAddBonusMsgDTO;
+import com.waitfor.contentcenter.domain.entity.messaging.RocketmqTransactionLog;
 import com.waitfor.contentcenter.domain.enums.AuditStatusEnum;
 import com.waitfor.contentcenter.feignclient.UserCenterFeignClient;
 import lombok.RequiredArgsConstructor;
