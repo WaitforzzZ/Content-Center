@@ -26,6 +26,15 @@ spring:
       transport:
         # 指定sentinel 控制台的地址
         dashboard: localhost:8080
+    # 整合stream
+    stream:
+      rocketmq:
+        binder:
+          name-server: 127.0.0.1:9876
+      bindings:
+        output:
+          # 用来指定topic
+          destination: stream-test-topic
   application:
     # 服务名称尽量用-， 不要用_， 不要用特殊字符
     name: content-center
@@ -46,6 +55,8 @@ ribbon:
 logging:
   level:
     com.waitfor.contentcenter.feignclient.UserCenterFeignClient: debug
+    # 使用stream时控制台不打印nacos心跳日志
+    com.alibaba.nacos: error
 feign:
   sentinel:
     # 为feign整合sentinel

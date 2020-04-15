@@ -89,6 +89,11 @@
 			<artifactId>rocketmq-spring-boot-starter</artifactId>
 			<version>2.0.3</version>
 		</dependency>
+		<!--整合Spring Cloud Stream-->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-stream-rocketmq</artifactId>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
