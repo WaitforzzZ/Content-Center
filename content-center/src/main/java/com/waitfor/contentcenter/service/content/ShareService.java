@@ -125,7 +125,7 @@ public class ShareService {
         // 3. 如果是PASS， 那么发送消息给rocketmq， 让用户中心去消费， 并为发布人添加积分
         //异步执行
         //this.userCenterFeignClient.addBonus(id,500);
-        this.rocketMQTemplate.convertAndSend("add-bonus ",
+        this.rocketMQTemplate.convertAndSend("add-bonus",
                 UserAddBonusMsgDTO.builder()
                         .userId(share.getUserId())
                         .bonus(50)
