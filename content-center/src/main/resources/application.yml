@@ -31,12 +31,18 @@ spring:
       rocketmq:
         binder:
           name-server: 127.0.0.1:9876
+        bindings:
+          output:
+            producer:
+              transactional: true
+              group: tx-add-bonus-group
       bindings:
         output:
           # 用来指定topic
-          destination: stream-test-topic
-        my-output:
-          destination: stream-my-topic
+          destination: add-bonus
+#          destination: stream-test-topic
+#        my-output:
+#          destination: stream-my-topic
   application:
     # 服务名称尽量用-， 不要用_， 不要用特殊字符
     name: content-center
@@ -89,8 +95,8 @@ resttemplate:
   sentinel:
     # 关闭 @SentinelRestTemplate注解（true开启）
     enabled: false
-rocketmq:
-  name-server: 127.0.0.1:9876
-  producer:
-    # 小坑： 必须制定group
-    group: test-group
+#rocketmq:
+#  name-server: 127.0.0.1:9876
+#  producer:
+#    # 小坑： 必须制定group
+#    group: test-group

@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSON;
 import com.waitfor.contentcenter.dao.messaging.RocketmqTransactionLogMapper;
 import com.waitfor.contentcenter.domain.dto.content.ShareAuditDTO;
 import com.waitfor.contentcenter.domain.dto.messaging.UserAddBonusMsgDTO;
@@ -18,6 +19,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
@@ -43,6 +45,7 @@ public class ShareService {
     private final UserCenterFeignClient userCenterFeignClient;
     private final RocketMQTemplate rocketMQTemplate;
     private final RocketmqTransactionLogMapper rocketmqTransactionLogMapper;
+    private final Source source;
 
     public ShareDTO findById(Integer id) {
         // 获取分享详情
@@ -158,7 +161,22 @@ public class ShareService {
         if(AuditStatusEnum.PASS.equals(auditDTO.getAuditStatusEnum())){
             //发送半消息
             String transactionId = UUID.randomUUID().toString();
-            this.rocketMQTemplate.sendMessageInTransaction(
+            // 使用stream重构rocketMQTemplate的代码
+            this.source.output()
+                    .send(MessageBuilder
+                            .withPayload(
+                                    UserAddBonusMsgDTO.builder()
+                                            .userId(share.getUserId())
+                                            .bonus(50)
+                                            .build()
+                            )
+                            // header也有妙用...
+                            .setHeader(RocketMQHeaders.TRANSACTION_ID, transactionId)
+                            .setHeader("share_id", id)
+                            .setHeader("dto", JSON.toJSONString(auditDTO))
+                            .build()
+                    );
+           /* this.rocketMQTemplate.sendMessageInTransaction(
                     "tx-add-bonus-group",
                     "add-bonus",
                     MessageBuilder
@@ -174,7 +192,7 @@ public class ShareService {
                             .build(),
                     // arg有大用处
                     auditDTO
-            );
+            );*/
         }
         else {
             this.auditById(id, auditDTO);

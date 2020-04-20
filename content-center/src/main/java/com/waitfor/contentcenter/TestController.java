@@ -1,9 +1,5 @@
 package com.waitfor.contentcenter;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import com.alibaba.csp.sentinel.Entry;
 import com.alibaba.csp.sentinel.SphU;
 import com.alibaba.csp.sentinel.Tracer;
@@ -13,10 +9,11 @@ import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.alibaba.csp.sentinel.slots.block.RuleConstant;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
+import com.waitfor.contentcenter.dao.content.ShareMapper;
 import com.waitfor.contentcenter.domain.dto.user.UserDTO;
+import com.waitfor.contentcenter.domain.entity.content.Share;
 import com.waitfor.contentcenter.feignclient.TestBaiduFeignClient;
 import com.waitfor.contentcenter.feignclient.TestUserCenterFeignClient;
-import com.waitfor.contentcenter.rocketmq.MySource;
 import com.waitfor.contentcenter.sentineltest.TestControllerBlockHandlerClass;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,16 +21,15 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.stream.messaging.Source;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.waitfor.contentcenter.dao.content.ShareMapper;
-import com.waitfor.contentcenter.domain.entity.content.Share;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -195,7 +191,7 @@ public class TestController {
 						UserDTO.class, userId);
 	}
 
-	@Autowired
+	/*@Autowired
 	private Source source;
 	@GetMapping("/test-stream")
 	public String testStream(){
@@ -219,5 +215,5 @@ public class TestController {
 								.build()
 				);
 		return "success";
-	}
+	}*/
 }
