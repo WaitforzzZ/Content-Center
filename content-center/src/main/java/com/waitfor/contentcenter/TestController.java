@@ -16,6 +16,7 @@ import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
 import com.waitfor.contentcenter.domain.dto.user.UserDTO;
 import com.waitfor.contentcenter.feignclient.TestBaiduFeignClient;
 import com.waitfor.contentcenter.feignclient.TestUserCenterFeignClient;
+import com.waitfor.contentcenter.rocketmq.MySource;
 import com.waitfor.contentcenter.sentineltest.TestControllerBlockHandlerClass;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -204,6 +205,19 @@ public class TestController {
 					.withPayload("消息体")
 					.build()
 			);
+		return "success";
+	}
+
+	@Autowired
+	private MySource mySource;
+	@GetMapping("/test-stream-2")
+	public String testStream2(){
+		this.mySource.output()
+				.send(
+						MessageBuilder
+								.withPayload("消息体")
+								.build()
+				);
 		return "success";
 	}
 }

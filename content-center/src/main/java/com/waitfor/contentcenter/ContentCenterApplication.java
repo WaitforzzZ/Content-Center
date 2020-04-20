@@ -1,6 +1,7 @@
 package com.waitfor.contentcenter;
 
 import com.waitfor.contentcenter.configuration.GlobalFeignConfiguration;
+import com.waitfor.contentcenter.rocketmq.MySource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.alibaba.sentinel.annotation.SentinelRestTemplate;
@@ -13,10 +14,10 @@ import org.springframework.web.client.RestTemplate;
 
 import tk.mybatis.spring.annotation.MapperScan;
 // 扫描mybatis哪些包里面的接口
-@MapperScan("com.waitfor")
+@MapperScan("com.waitfor.contentcenter.dao")
 @SpringBootApplication
 @EnableFeignClients//(defaultConfiguration = GlobalFeignConfiguration.class)
-@EnableBinding(Source.class)
+@EnableBinding({Source.class, MySource.class})
 public class ContentCenterApplication {
 
 	public static void main(String[] args) {
