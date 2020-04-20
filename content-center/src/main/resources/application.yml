@@ -82,6 +82,9 @@ management:
     web:
       exposure:
         include: '*'
+  endpoint:
+    health:
+      show-details: always
 resttemplate:
   sentinel:
     # 关闭 @SentinelRestTemplate注解（true开启）
