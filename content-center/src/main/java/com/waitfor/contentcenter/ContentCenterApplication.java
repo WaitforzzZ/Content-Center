@@ -10,6 +10,9 @@ import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 import tk.mybatis.spring.annotation.MapperScan;
+
+import java.util.Collections;
+
 // 扫描mybatis哪些包里面的接口
 @MapperScan("com.waitfor.contentcenter.dao")
 @SpringBootApplication
@@ -29,6 +32,12 @@ public class ContentCenterApplication {
 	@LoadBalanced
 	@SentinelRestTemplate
 	public RestTemplate restTemplate(){
-		return new RestTemplate();
+		RestTemplate template = new RestTemplate();
+		template.setInterceptors(
+				Collections.singletonList(
+						new TestRestTemplateTokenRelayInterceptor()
+				)
+		);
+		return template;
 	}
 }
