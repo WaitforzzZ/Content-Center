@@ -9,7 +9,7 @@ public class UserCenterFeignClientFallback implements UserCenterFeignClient {
     @Override
     public UserDTO findById(Integer id) {
         UserDTO userDTO = new UserDTO();
-        userDTO.setWxNickname("一个默认用户");
+        userDTO.setWxNickname("流控/降级返回的用户");
         return userDTO;
     }
 }
