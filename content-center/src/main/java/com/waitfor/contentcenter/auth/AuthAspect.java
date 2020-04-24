@@ -20,7 +20,7 @@ import java.util.Objects;
 @Aspect
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class CheckLoginAspect {
+public class AuthAspect {
 
     private final JwtOperator jwtOperator;
 
