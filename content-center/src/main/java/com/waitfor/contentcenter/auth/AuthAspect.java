@@ -61,20 +61,24 @@ public class AuthAspect {
 
     @Around("@annotation(com.waitfor.contentcenter.auth.CheckAuthorization)")
     public Object checkAuthorization(ProceedingJoinPoint point) throws Throwable {
-        // 1. 验证token是否合法；
-        this.checkToken();
-        // 2. 验证用户角色是否匹配
-        HttpServletRequest request = getHttpServletRequest();
-        String role = (String) request.getAttribute("role");
+        try {
+            // 1. 验证token是否合法；
+            this.checkToken();
+            // 2. 验证用户角色是否匹配
+            HttpServletRequest request = getHttpServletRequest();
+            String role = (String) request.getAttribute("role");
 
-        MethodSignature signature = (MethodSignature) point.getSignature();
-        Method method = signature.getMethod();
-        CheckAuthorization annotation = method.getAnnotation(CheckAuthorization.class);
-        // 拿到注解中传的admin
-        String value = annotation.value();
+            MethodSignature signature = (MethodSignature) point.getSignature();
+            Method method = signature.getMethod();
+            CheckAuthorization annotation = method.getAnnotation(CheckAuthorization.class);
+            // 拿到注解中传的admin
+            String value = annotation.value();
 
-        if (!Objects.equals(role, value)) {
-            throw new SecurityException("用户无权访问！");
+            if (!Objects.equals(role, value)) {
+                throw new SecurityException("用户无权访问！");
+            }
+        } catch (Throwable throwable) {
+            throw new SecurityException("用户无权访问！", throwable);
         }
 
         return point.proceed();
